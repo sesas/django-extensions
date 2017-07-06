@@ -1,6 +1,10 @@
 from django.core.management.base import AppCommand
 import django.db.models as django_models
-from django.db.models import get_models
+try:
+    from django.db.models import get_models
+except:
+    from django.apps import apps
+    get_models = apps.get_models
 
 LIST_PER_PAGE_DEFAULT = 30
 
@@ -9,6 +13,9 @@ class Command(AppCommand):
     help = "Generates ModelAdmin for the given app that you should put in <APP>/admin.py."
     args = "[appname]"
     label = "application name"
+
+    def handle_app_config(self, app, **options):
+        return describe_admin(app)
 
     def handle_app(self, app, **options):
         return describe_admin(app)

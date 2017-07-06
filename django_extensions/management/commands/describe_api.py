@@ -1,12 +1,18 @@
 from django.core.management.base import AppCommand
 import django.db.models as django_models
-from django.db.models import get_models
-
-
+try:
+    from django.db.models import get_models
+except:
+    from django.apps import apps
+    get_models = apps.get_models
+    
 class Command(AppCommand):
     help = "Generates tastypie resources for the given app that you should put in APP/api.py."
     args = "[appname]"
     label = "application name"
+
+    def handle_app_config(self, app, **options):
+        return describe_api(app)
 
     def handle_app(self, app, **options):
         return describe_api(app)
